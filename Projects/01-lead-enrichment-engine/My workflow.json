@@ -1,0 +1,188 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "15e4e0ff-a51e-42f1-864c-fb15719daf45",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -288,
+        -80
+      ],
+      "id": "a8a230b5-0b10-45e5-959d-001c51eaa6fc",
+      "name": "Webhook",
+      "webhookId": "15e4e0ff-a51e-42f1-864c-fb15719daf45"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.hunter.io/v2/domain-search?domain={{$json[\"query\"][\"email\"].split('@')[1]}}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -80,
+        -80
+      ],
+      "id": "dd075aff-fe99-4900-917d-1e50393eab5d",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpQueryAuth": {
+          "id": "Kxhmp92CaHV1HOGx",
+          "name": "Query Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8285d7c9-0eee-4b98-a668-af397583f37d",
+              "leftValue": "={{ $json.data.organization }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        128,
+        -80
+      ],
+      "id": "e7db7a85-9fce-4d23-a91d-c62b7b723b50",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "#all-ai-automation",
+          "mode": "name"
+        },
+        "text": "=🚀 New Qualified Lead! 🚀\n\nName: {{$node[\"Webhook\"].json[\"query\"][\"firstName\"]}} {{$node[\"Webhook\"].json[\"query\"][\"lastName\"]}}\nEmail: {{$node[\"Webhook\"].json[\"query\"][\"email\"]}}\nCompany: {{$node[\"HTTP Request\"].json[\"data\"][\"organization\"]}}\nWebsite: http://{{$node[\"HTTP Request\"].json[\"data\"][\"domain\"]}}\n\nThis lead looks like a great fit. Please follow up!",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        336,
+        -176
+      ],
+      "id": "b88b89e2-9b1d-4b99-a324-ee7363b84606",
+      "name": "Send a message",
+      "webhookId": "3e1baaf6-7977-4154-abcc-a5487f376823",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "zXNggeErq4OClZvg",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "email": "={{$node[\"Webhook\"].json[\"query\"][\"email\"]}}",
+        "additionalFields": {
+          "companyName": "={{$node[\"HTTP Request\"].json[\"data\"][\"organization\"]}}",
+          "firstName": "={{$node[\"Webhook\"].json[\"query\"][\"firstName\"]}}",
+          "lastName": "={{$node[\"Webhook\"].json[\"query\"][\"lastName\"]}}"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.hubspot",
+      "typeVersion": 2.1,
+      "position": [
+        544,
+        -160
+      ],
+      "id": "9d357a17-c5d0-4cbf-baa0-48cb1ec53399",
+      "name": "Create or update a contact",
+      "credentials": {
+        "hubspotOAuth2Api": {
+          "id": "YjH9YGa8xrPoj4hd",
+          "name": "HubSpot account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Create or update a contact",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "d6de64b2-8593-46d0-a132-943902dda0c5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a244d38b8c7bc8fda184fbd5d1d5b832b5625874ebf2528fd966884391475120"
+  },
+  "id": "mytyH424SDcHy213",
+  "tags": []
+}
