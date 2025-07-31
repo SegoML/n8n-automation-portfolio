@@ -1,0 +1,324 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "=https://api.hunter.io/v2/domain-search?domain={{$json[\"query\"][\"email\"].split('@')[1]}}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpQueryAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -624,
+        -192
+      ],
+      "id": "dd075aff-fe99-4900-917d-1e50393eab5d",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpQueryAuth": {
+          "id": "Kxhmp92CaHV1HOGx",
+          "name": "Query Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C095E1S9BAT",
+          "mode": "list",
+          "cachedResultName": "all-ai-automation"
+        },
+        "text": "=🚀 New Qualified Lead! 🚀\n\nAI-Assessed Intent: {{$node[\"Gemini\"].json.content.parts[0].text}}\n\nName: {{$node[\"Webhook\"].json.query.firstName}} {{$node[\"Webhook\"].json.query.lastName}}\nEmail: {{$node[\"Webhook\"].json.query.email}}\nCompany: {{$node[\"HTTP Request\"].json.data.organization}}\nWebsite: http://{{$node[\"HTTP Request\"].json.data.domain}}\n📄 Project Brief: {{$node[\"Webhook\"].json.query.fileUrl}}\n\nThis lead meets our qualification criteria. Please follow up.",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        400,
+        -144
+      ],
+      "id": "b88b89e2-9b1d-4b99-a324-ee7363b84606",
+      "name": "Send a message",
+      "webhookId": "3e1baaf6-7977-4154-abcc-a5487f376823",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "zXNggeErq4OClZvg",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "email": "={{$node[\"Webhook\"].json[\"query\"][\"email\"]}}",
+        "additionalFields": {
+          "companyName": "={{$node[\"HTTP Request\"].json[\"data\"][\"organization\"]}}",
+          "firstName": "={{$node[\"Webhook\"].json[\"query\"][\"firstName\"]}}",
+          "lastName": "={{$node[\"Webhook\"].json[\"query\"][\"lastName\"]}}",
+          "websiteUrl": "={{$node[\"Webhook\"].json[\"query\"][\"fileUrl\"]}}\n"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.hubspot",
+      "typeVersion": 2.1,
+      "position": [
+        848,
+        -64
+      ],
+      "id": "9d357a17-c5d0-4cbf-baa0-48cb1ec53399",
+      "name": "Create or update a contact",
+      "credentials": {
+        "hubspotOAuth2Api": {
+          "id": "YjH9YGa8xrPoj4hd",
+          "name": "HubSpot account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "bucketName": "=sego-lead-enrichment-uploads",
+        "fileKey": "={{$node[\"Webhook\"].json.query.fileUrl.split('.com/')[1]}}"
+      },
+      "type": "n8n-nodes-base.awsS3",
+      "typeVersion": 2,
+      "position": [
+        -272,
+        -256
+      ],
+      "id": "9a771032-af0d-44da-ab9d-87e8d42589dd",
+      "name": "Download a file",
+      "credentials": {
+        "aws": {
+          "id": "5A9jKUVfgEpVdzho",
+          "name": "AWS account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "path": "15e4e0ff-a51e-42f1-864c-fb15719daf45",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -912,
+        -208
+      ],
+      "id": "2509a6d7-ca0b-4e60-9907-1c68b1a00a51",
+      "name": "Webhook",
+      "webhookId": "15e4e0ff-a51e-42f1-864c-fb15719daf45"
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -112,
+        -80
+      ],
+      "id": "7fbf9a1c-c63d-4cc6-b113-e88a078461a8",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-1.5-flash-latest",
+          "mode": "list",
+          "cachedResultName": "models/gemini-1.5-flash-latest"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{$node[\"Extract from File\"].json.data}}\n\n"
+            },
+            {
+              "content": "You are an expert sales assistant. Your job is to classify the intent of an inbound project brief. Read the brief and classify it into one of three categories: \"High Intent\" (ready to buy, specific requirements), \"Medium Intent\" (exploring options, general inquiry), or \"Low Intent\" (researching, not a serious lead). Respond with ONLY the category name and nothing else.",
+              "role": "model"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -256
+      ],
+      "id": "d6870e8e-c6fe-493c-b0be-36b4c83ab88c",
+      "name": "Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "LIqgX9sydjXUeLlA",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8285d7c9-0eee-4b98-a668-af397583f37d",
+              "leftValue": "={{ $json.data.organization }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -416,
+        -112
+      ],
+      "id": "1056aeb7-c053-4315-a3f6-853dbc654ed3",
+      "name": "If"
+    }
+  ],
+  "pinData": {
+    "Create or update a contact": [
+      {
+        "json": {
+          "name": "First item",
+          "code": 1
+        }
+      },
+      {
+        "json": {
+          "name": "Second item",
+          "code": 2
+        }
+      }
+    ],
+    "Gemini": [
+      {
+        "json": {
+          "content": {
+            "parts": [
+              {
+                "text": "High Intent\n"
+              }
+            ],
+            "role": "model"
+          },
+          "finishReason": "STOP",
+          "avgLogprobs": -0.0013360450975596905
+        }
+      }
+    ]
+  },
+  "connections": {
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Create or update a contact",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download a file": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Gemini",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Download a file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e2d9b346-d045-4ac5-89bb-36a12c06b4ab",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a244d38b8c7bc8fda184fbd5d1d5b832b5625874ebf2528fd966884391475120"
+  },
+  "id": "mytyH424SDcHy213",
+  "tags": []
+}
