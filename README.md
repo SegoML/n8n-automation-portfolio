@@ -1,87 +1,137 @@
-# My n8n Automation Portfolio
+# n8n Automation Portfolio
+### Masego Letsoko · Automation Developer & Systems Integrator
 
-Hello! I'm Masego, an AI and & ML enthusiast commited to building AI Automated Systems and has a passion for building efficient solutions and automating complex processes.
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Masego_Letsoko-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/masego-letsoko-6271a6171/)
+[![Email](https://img.shields.io/badge/Email-masegoletsoko8@gmail.com-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:masegoletsoko8@gmail.com)
+[![GitHub](https://img.shields.io/badge/GitHub-SegoML-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/SegoML)
 
-This repository serves as a portfolio of my work, demonstrating skills in front-end development (React/Next.js), cloud infrastructure (AWS), API integration, and back-end automation with n8n.
+---
+
+## About This Repository
+
+This portfolio documents end-to-end automation systems I've designed and built using **n8n**, **REST APIs**, **webhooks**, and cloud infrastructure. Each project solves a real business problem — connecting multiple platforms, eliminating manual processes, and building reliable, scalable workflows.
+
+My background spans **legal tech**, **AI platforms**, and **sales & marketing operations**, with production automation systems running on AWS Lambda and n8n in live client environments.
 
 ---
 
 ## Projects
 
-Here is a list of the projects I have built and documented.
-
-| # | Project Name                                                              | Technologies Used                                               |
-|---|---------------------------------------------------------------------------|-----------------------------------------------------------------|
-| 1 | [Automated Lead Enrichment & Sales Outreach Engine](./projects/01-lead-enrichment-engine) | `n8n`, `Webhook`, `Hunter.io API`, `Slack`, `HubSpot`             |
-| 2 | [**Full-Stack Lead Capture App with AWS S3 Integration**](./projects/02-fullstack-lead-capture-app) | `Next.js`, `React`, `AWS S3`, `IAM`, `n8n`, `Slack`, `HubSpot` |
-
+| # | Project | Stack | Problem Solved |
+|---|---------|-------|----------------|
+| 1 | [Automated Lead Enrichment & Sales Outreach Engine](#project-1) | `n8n` `Webhooks` `Hunter.io` `HubSpot` `Slack` | Automates lead qualification and CRM entry end-to-end |
+| 2 | [Full-Stack Lead Capture App with AWS S3 Integration](#project-2) | `Next.js` `React` `AWS S3` `IAM` `n8n` `HubSpot` `Slack` | Captures leads + files, routes to CRM with zero manual handling |
 
 ---
 
-## About Me & Contact
+## Project 1
 
-I am always looking for new challenges and opportunities to apply my automation and development skills.
+### Automated Lead Enrichment & Sales Outreach Engine
 
-*   **LinkedIn:** https://www.linkedin.com/in/masego-letsoko-6271a6171/
-*   
-Use code with caution.
-Markdown
-Part 2: Documenting "Project 2" - The README.md
-This is the most important part. We need to create a detailed, professional README for this specific project.
-Inside the 02-fullstack-lead-capture-app folder, create a new file named README.md.
-Paste the following template into this new file. This template is designed to impress.
-Generated markdown
-# Project 2: Full-Stack Lead Capture & Processing System
+**The Problem:** Sales teams waste hours manually researching leads, copying data between tools, and sending follow-up messages. This workflow eliminates all of it.
 
-This project is a complete, end-to-end solution for capturing and processing new business leads. It features a custom-built web application, secure cloud file storage with AWS S3, and a powerful back-end automation workflow built with n8n.
+**How It Works:**
 
-It solves a critical business problem by automating the entire lifecycle of a new lead—from initial contact on a web form to a fully enriched and actioned record in a CRM, complete with associated project files.
+```
+Webhook Trigger → Data Extraction → Hunter.io Email Enrichment
+       ↓
+Conditional Logic (qualify / disqualify)
+       ↓
+HubSpot CRM (create/update contact) → Slack Notification
+```
 
----
+**Workflow Steps:**
 
-### **Live System in Action**
+1. **Webhook Trigger** — Receives lead data from a web form or external source
+2. **Data Transformation** — Cleans and structures the incoming payload using JavaScript
+3. **Email Enrichment** — Queries the Hunter.io API to verify and enrich the lead's email and company data
+4. **Lead Qualification** — Applies conditional logic to route qualified vs. unqualified leads down separate paths
+5. **CRM Update** — Creates or updates the contact record in HubSpot with all enriched data
+6. **Team Notification** — Sends a formatted Slack message to the sales channel with lead details and a direct CRM link
 
-1.  **The Custom Web Form:** A user fills out their details and uploads a project brief.
-    ![The Next.js Front-End Form](assets/app-form-success.png)
-
-2.  **Secure File Upload:** The uploaded file is stored securely in a private AWS S3 bucket.
-    ![File in AWS S3](assets/s3-upload-success.png)
-
-3.  **Real-Time Sales Notification:** A detailed alert, including a link to the project brief, is instantly sent to the sales team on Slack.
-    ![Slack Notification](assets/slack-notification-success.png)
-
-4.  **CRM Record Creation:** A new contact is automatically created in HubSpot with all the enriched data and a link to their project file.
-    ![HubSpot Contact Created](assets/hubspot-contact-success.png)
+**Key Techniques:**
+- REST API integration with authentication headers
+- Webhook payload parsing and field mapping
+- Conditional branching in n8n
+- Error handling and fallback paths
 
 ---
 
-### **Technical Architecture**
+## Project 2
 
-This project demonstrates a multi-faceted skill set across front-end development, cloud infrastructure, and back-end automation.
+### Full-Stack Lead Capture App with AWS S3 Integration
 
-![Architecture Diagram](assets/architecture-diagram.png) *(You can create this diagram using a tool like diagrams.net)*
+**The Problem:** Capturing leads who also need to submit project files (briefs, specs, documents) — while keeping cloud credentials secure and ensuring every submission lands in the CRM automatically.
 
-1.  **Front-End Application (`Next.js / React`):** A custom-built, user-facing web form for lead submission and file uploads.
-2.  **Secure API Endpoint (`Next.js API Route`):** A server-side function that acts as a secure bridge to AWS. It generates short-lived, "presigned" URLs for file uploads, ensuring AWS secret keys are never exposed to the client-side.
-3.  **Cloud File Storage (`AWS S3`):** A private, secure S3 bucket to store all user-submitted documents.
-4.  **Identity & Access Management (`AWS IAM`):** A dedicated IAM user with a least-privilege policy, granting it permission *only* to upload files to the specific S3 bucket.
-5.  **Automation Engine (`n8n`):** A robust workflow that:
-    *   Receives data from the front-end via a webhook.
-    *   Enriches the lead's email using the Hunter.io API.
-    *   Qualifies the lead using conditional logic.
-    *   Sends notifications to Slack.
-    *   Creates and updates records in the HubSpot CRM.
+**Architecture:**
+
+```
+Next.js Form (React)
+       ↓
+Next.js API Route (generates presigned S3 URL — keeps AWS keys server-side)
+       ↓
+AWS S3 (private bucket, IAM least-privilege policy)
+       ↓
+n8n Webhook (receives form data + S3 file reference)
+       ↓
+Hunter.io Enrichment → HubSpot Contact Created → Slack Alert
+```
+
+**Components:**
+
+| Layer | Technology | Purpose |
+|-------|-----------|---------|
+| Frontend | Next.js / React | Custom lead capture form with file upload |
+| Secure Upload | Next.js API Route + Presigned URL | Keeps AWS credentials server-side only |
+| File Storage | AWS S3 + IAM | Private, secure document storage with least-privilege access |
+| Automation | n8n | Orchestrates enrichment, CRM entry, and notifications |
+| CRM | HubSpot | Contact creation with file reference attached |
+| Notifications | Slack | Real-time sales team alerts |
+
+**Security Practices Applied:**
+- AWS IAM user scoped to a single S3 bucket with write-only permissions
+- Presigned URLs expire after a short window — never expose AWS keys to the client
+- Environment variables used throughout; no secrets in source code
+
+**Source Code:** [`/app-source-code/n8n-lead-app`](./app-source-code/n8n-lead-app)
 
 ---
 
-### **Source Code & Setup**
+## Production Experience
 
-*   **Application Source Code:** The full source code for the Next.js application can be found in the [`/app-source-code`](./app-source-code) directory.
-*   **n8n Workflow:** The automation workflow can be downloaded from [`/workflow.json`](./workflow.json).
+Beyond these portfolio projects, I've built and currently maintain production automation systems for a US-based legal tech client:
 
-To run this project, you would need to:
-1.  Set up the AWS S3 bucket and IAM user.
-2.  Configure the n8n workflow with your own credentials for Hunter, Slack, and HubSpot.
-3.  Set up the Next.js application locally, providing your AWS and n8n details in an `.env.local` file.
+- **Casey AI Intake Platform** — An event-driven automation architecture on AWS spanning five Lambda functions, integrating Amazon Lex, Bedrock, Polly, SES, DynamoDB, SmartAdvocate CRM, and DocuBee e-signature. Handles bilingual (English/Spanish) legal intake end-to-end with zero manual processing.
+- **Conversion Tracking Pipeline** — Server-side event routing via Lambda to Google Ads and Meta Pixel, enabling accurate marketing attribution without client-side dependencies.
 
-Detailed setup instructions are beyond the scope of this README but follow standard deployment procedures for these technologies.
+---
+
+## Tech Stack
+
+![n8n](https://img.shields.io/badge/n8n-EA4B71?style=flat-square&logo=n8n&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
+![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)
+![AWS](https://img.shields.io/badge/AWS-232F3E?style=flat-square&logo=amazon-aws&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=node.js&logoColor=white)
+![React](https://img.shields.io/badge/React-20232A?style=flat-square&logo=react&logoColor=61DAFB)
+![HubSpot](https://img.shields.io/badge/HubSpot-FF7A59?style=flat-square&logo=hubspot&logoColor=white)
+
+**Automation & Integration:** n8n · AWS Lambda · Webhooks · REST APIs · OAuth  
+**Languages:** JavaScript (Node.js) · Python · SQL  
+**Cloud:** AWS (Lambda, S3, IAM, SES, DynamoDB, Lex, Bedrock, Polly)  
+**CRM & MarTech:** HubSpot · SmartAdvocate · Meta Pixel · Google Ads  
+**Frontend:** React · Next.js · Netlify  
+
+---
+
+## About Me
+
+I'm a South Africa-based automation developer and systems integrator with a background in software engineering (ALX Africa), law (LLB, UNISA), and data science (DataCamp). I build automation systems that connect enterprise platforms, eliminate manual work, and scale operations — working remotely with clients across the US and Africa.
+
+I also run **GVVA** ([gv-va.com](https://gv-va.com)), an automation studio offering AI integrations, workflow design, and custom software development.
+
+**Open to:** Remote automation developer roles · Contract engagements · Integration projects
+
+---
+
+*📍 Johannesburg, South Africa · Available remotely (GMT+2)*
