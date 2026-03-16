@@ -22,8 +22,8 @@ Here is a list of the projects I have built and documented.
 
 I am always looking for new challenges and opportunities to apply my automation and development skills.
 
-*   **LinkedIn:** [Your LinkedIn Profile URL]
-*   **Medium:** [Your Medium Profile URL]
+*   **LinkedIn:** https://www.linkedin.com/in/masego-letsoko-6271a6171/
+*   
 Use code with caution.
 Markdown
 Part 2: Documenting "Project 2" - The README.md
